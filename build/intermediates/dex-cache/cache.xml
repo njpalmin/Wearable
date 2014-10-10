@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/pre-dexed/debug/classes-bf5c7c74ef10ba1ab05cd0a9565b47608eb30c16.jar"
+        jar="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+    <item
+        dex="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/pre-dexed/debug/classes-c041e1e0a6dbc3691a7880a4059bbe93231ba8da.jar"
+        jar="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/exploded-aar/com.google.android.gms/play-services/5.0.89/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="d71573c9c5ea98a8db47ad6ff993a63d492b3bfa"/>
+    <item
+        dex="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-612c3358de3316d8bc202fc567f076786a176d3c.jar"
+        jar="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Wearable/build/intermediates/pre-dexed/debug/classes-4bc77b0d5b24287db45e2158c9c4e56d79f8b08a.jar"
+        jar="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Wearable/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/5.0.77/classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="80a6f6f2d0dfcfae8c424cf81dcdf7157e7bf4b8"/>
+
+</pre-dex-items>
