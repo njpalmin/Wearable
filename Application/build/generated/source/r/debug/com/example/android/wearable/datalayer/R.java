@@ -455,8 +455,9 @@ containing a value of this type.
         public static final int send_photo=0x7f07001a;
         public static final int start=0x7f07001b;
         public static final int start_wearable_activity=0x7f07001c;
-        public static final int take_photo=0x7f07001d;
-        public static final int wallet_buy_button_place_holder=0x7f07001e;
+        public static final int stop_wearable_activity=0x7f07001d;
+        public static final int take_photo=0x7f07001e;
+        public static final int wallet_buy_button_place_holder=0x7f07001f;
     }
     public static final class style {
         public static final int Divider=0x7f080000;

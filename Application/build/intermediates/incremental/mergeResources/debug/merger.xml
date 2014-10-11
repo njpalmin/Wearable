@@ -7185,11 +7185,13 @@ normal
             <file
                 path="/Users/ptmn68/workspace/DataLayer/Application/src/main/res/values/strings.xml"
                 qualifiers="" >
-                <string name="start_wearable_activity" >Start Monitor HeartRate on Watch
+                <string name="start_wearable_activity" >Start Monitor HeartRate
                 </string>
                 <string name="take_photo" >Take a Photo
                 </string>
                 <string name="start" >Start
+                </string>
+                <string name="stop_wearable_activity" >Stop Monitor HeartRate
                 </string>
                 <string name="app_name" >HeartRate Monitor App
                 </string>

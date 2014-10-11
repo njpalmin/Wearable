@@ -16,7 +16,8 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">HeartRate Monitor App</string>
-    <string name="start_wearable_activity">Start Monitor HeartRate on Watch</string>
+    <string name="start_wearable_activity">Start Monitor HeartRate</string>
+    <string name="stop_wearable_activity">Stop Monitor HeartRate</string>
     <string name="start">Start</string>
     <string name="take_photo">Take a Photo</string>
     <string name="send_photo">Send Photo</string>

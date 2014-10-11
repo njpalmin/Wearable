@@ -52,6 +52,7 @@ public class DataLayerListenerService extends WearableListenerService {
     private static final String TAG = "DataLayerListenerService";
 
     private static final String START_ACTIVITY_PATH = "/start-activity";
+    private static final String STOP_ACTIVITY_PATH = "/stop-activity";
     private static final String DATA_ITEM_RECEIVED_PATH = "/data-item-received";
     public static final String HEARTRATE_PATH = "/heartrate";
     public static final String HEARTRATE_KEY = "HEARTRATE";
@@ -59,20 +60,22 @@ public class DataLayerListenerService extends WearableListenerService {
     private static final int MAX_LOG_TAG_LENGTH = 23;
     GoogleApiClient mGoogleApiClient;
 
-    private Sensor mHeartRateSensor;
-    private float mHeartRate;
-    private SensorManager mSensorManager;
-    private ScheduledExecutorService mGeneratorExecutor;
-    private ScheduledFuture<?> mDataItemGeneratorFuture;
 
     @Override
     public void onCreate() {
         LOGD(TAG,"onCreate");
         super.onCreate();
+
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Wearable.API)
                 .build();
         mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onDestroy() {
+        LOGD(TAG,"onDestroy");
+        super.onDestroy();
     }
 
     @Override
@@ -95,12 +98,13 @@ public class DataLayerListenerService extends WearableListenerService {
         LOGD(TAG, "onMessageReceived: " + messageEvent);
         // Check to see if the message is to start an activity
         if (messageEvent.getPath().equals(START_ACTIVITY_PATH)) {
-            Intent startIntent = new Intent(this, MainActivity.class);
+            startService(new Intent(this, HeartRateMonitor.class));
+//            Intent startIntent = new Intent(this, MainActivity.class);
 //            startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(startIntent);
-//            mSensorManager.registerListener(this,mHeartRateSensor,3);
-//            mDataItemGeneratorFuture = mGeneratorExecutor.scheduleWithFixedDelay(
-//                    new DataItemGenerator(), 1, 3, TimeUnit.SECONDS);
+//            startActivity(startIntent);
+
+        } else if (messageEvent.getPath().equals(STOP_ACTIVITY_PATH)) {
+            stopService(new Intent(this,HeartRateMonitor.class));
         }
     }
 
@@ -120,4 +124,6 @@ public class DataLayerListenerService extends WearableListenerService {
             Log.d(tag, message);
         }
     }
+
+
 }

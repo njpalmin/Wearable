@@ -14,29 +14,29 @@
         revision="20.0.0"
         sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
     <item
-        dex="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/pre-dexed/debug/classes-c041e1e0a6dbc3691a7880a4059bbe93231ba8da.jar"
-        jar="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/exploded-aar/com.google.android.gms/play-services/5.0.89/classes.jar"
-        jumboMode="false"
-        revision="20.0.0"
-        sha1="d71573c9c5ea98a8db47ad6ff993a63d492b3bfa"/>
-    <item
         dex="/Users/ptmn68/workspace/DataLayer/Application/build/intermediates/pre-dexed/debug/classes-512e005b6db76eafe394ac398ab8b6d5f836249c.jar"
         jar="/Users/ptmn68/workspace/DataLayer/Application/build/intermediates/exploded-aar/com.google.android.gms/play-services/5.0.89/classes.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="d71573c9c5ea98a8db47ad6ff993a63d492b3bfa"/>
     <item
-        dex="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-612c3358de3316d8bc202fc567f076786a176d3c.jar"
-        jar="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar"
+        dex="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/pre-dexed/debug/classes-c041e1e0a6dbc3691a7880a4059bbe93231ba8da.jar"
+        jar="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/exploded-aar/com.google.android.gms/play-services/5.0.89/classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+        sha1="d71573c9c5ea98a8db47ad6ff993a63d492b3bfa"/>
     <item
         dex="/Users/ptmn68/workspace/DataLayer/Application/build/intermediates/pre-dexed/debug/classes-61f7b15a57757912aaf5dafd1bb3b0c21ef653de.jar"
         jar="/Users/ptmn68/workspace/DataLayer/Application/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/classes.jar"
         jumboMode="false"
         revision="20.0.0"
         sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+    <item
+        dex="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-612c3358de3316d8bc202fc567f076786a176d3c.jar"
+        jar="/Users/ptmn68/dev/Android-SDK/samples/android-20/wearable/DataLayer/Application/build/intermediates/exploded-aar/com.android.support/support-v4/20.0.0/libs/internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
     <item
         dex="/Users/ptmn68/workspace/DataLayer/Application/build/intermediates/pre-dexed/debug/support-annotations-20.0.0-5c0c2777a0d06c9595eec94ee0406d68cab945e8.jar"
         jar="/Users/ptmn68/dev/Android-SDK/extras/android/m2repository/com/android/support/support-annotations/20.0.0/support-annotations-20.0.0.jar"
@@ -50,7 +50,7 @@
         revision="20.0.0"
         sha1="80a6f6f2d0dfcfae8c424cf81dcdf7157e7bf4b8"/>
     <item
-        dex="/Users/ptmn68/workspace/DataLayer/Wearable/build/intermediates/pre-dexed/release/classes-94f389fc5be2f95df102e016fd639d8ec6430556.jar"
+        dex="/Users/ptmn68/workspace/DataLayer/Wearable/build/intermediates/pre-dexed/debug/classes-94f389fc5be2f95df102e016fd639d8ec6430556.jar"
         jar="/Users/ptmn68/workspace/DataLayer/Wearable/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/5.0.77/classes.jar"
         jumboMode="false"
         revision="20.0.0"

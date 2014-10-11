@@ -37,6 +37,8 @@
             </intent-filter>
         </service>
 
+        <service android:name=".HeartRateMonitor"></service>
+
         <activity
             android:name="com.example.android.wearable.datalayer.MainActivity"
             android:screenOrientation="portrait"

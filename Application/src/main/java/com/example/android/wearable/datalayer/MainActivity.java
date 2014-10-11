@@ -71,6 +71,7 @@ public class MainActivity extends Activity implements DataApi.DataListener,
     private static final int REQUEST_RESOLVE_ERROR = 1000;
 
     private static final String START_ACTIVITY_PATH = "/start-activity";
+    private static final String STOP_ACTIVITY_PATH = "/stop-activity";
     private static final String HEARTRATE_PATH = "/heartrate";
     private static final String HEARTRATE_KEY = "heartrate";
     private static final int HEARTRATE_THRESHOLD = 70;
@@ -87,6 +88,9 @@ public class MainActivity extends Activity implements DataApi.DataListener,
     private int mBrightness;
     private int mOrigBrightness;
     private Window mWindow;
+
+    private boolean mIsServiceRunning = false;
+    private Collection<String> mNodes;
 
     @Override
     public void onCreate(Bundle b) {
@@ -125,8 +129,11 @@ public class MainActivity extends Activity implements DataApi.DataListener,
 
     @Override
     public void onPause() {
-        super.onPause();
         resetBrightness();
+        for (String node : mNodes) {
+            sendStopActivityMessage(node);
+        }
+        super.onPause();
 //        Wearable.DataApi.removeListener(mGoogleApiClient,this);
     }
 
@@ -147,6 +154,14 @@ public class MainActivity extends Activity implements DataApi.DataListener,
         mResolvingError = false;
         Wearable.DataApi.addListener(mGoogleApiClient, this);
         mStartActivityBtn.setEnabled(true);
+        new getNodesTask().execute();
+//        mHandler.post(new Runnable(){
+//            @Override
+//            public void run() {
+//                mNodes = getNodes();
+//            }
+//        });
+
     }
 
     @Override //ConnectionCallbacks
@@ -253,11 +268,44 @@ public class MainActivity extends Activity implements DataApi.DataListener,
                         if (!sendMessageResult.getStatus().isSuccess()) {
                             Log.e(TAG, "Failed to send message with status code: "
                                     + sendMessageResult.getStatus().getStatusCode());
+                        } else {
+                            LOGD(TAG,"start service");
+                            mIsServiceRunning = true;
+                            mStartActivityBtn.setText(R.string.stop_wearable_activity);
                         }
                     }
                 }
         );
     }
+
+    private void sendStopActivityMessage(String node) {
+        Wearable.MessageApi.sendMessage(
+                mGoogleApiClient, node, STOP_ACTIVITY_PATH, new byte[0]).setResultCallback(
+                new ResultCallback<SendMessageResult>() {
+                    @Override
+                    public void onResult(SendMessageResult sendMessageResult) {
+                        if (!sendMessageResult.getStatus().isSuccess()) {
+                            Log.e(TAG, "Failed to send message with status code: "
+                                    + sendMessageResult.getStatus().getStatusCode());
+                        } else {
+                            LOGD(TAG,"stop service");
+                            mIsServiceRunning = false;
+                            mStartActivityBtn.setText(R.string.start_wearable_activity);
+                        }
+                    }
+                }
+        );
+    }
+
+    private class getNodesTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            mNodes = getNodes();
+            return null;
+        }
+    }
+
 
     private class StartWearableActivityTask extends AsyncTask<Void, Void, Void> {
 
@@ -280,8 +328,26 @@ public class MainActivity extends Activity implements DataApi.DataListener,
         new StartWearableActivityTask().execute();
     }
 
+    private class StopWearableActivityTask extends AsyncTask<Void, Void, Void> {
 
+        @Override
+        protected Void doInBackground(Void... args) {
+            Collection<String> nodes = getNodes();
+            for (String node : nodes) {
+                sendStopActivityMessage(node);
+            }
+            return null;
+        }
+    }
 
+    /** Sends an RPC to start a fullscreen Activity on the wearable. */
+    public void onStopWearableActivityClick(View view) {
+        LOGD(TAG, "Generating RPC");
+
+        // Trigger an AsyncTask that will query for a list of connected nodes and send a
+        // "start-activity" message to each connected node.
+        new StopWearableActivityTask().execute();
+    }
     /**
      * Sets up UI components and their callback handlers.
      */
@@ -289,6 +355,23 @@ public class MainActivity extends Activity implements DataApi.DataListener,
         mStartActivityBtn = (Button)findViewById(R.id.start_wearable_activity);
         mHeartRateView = (TextView)findViewById(R.id.heart_rate);
         mBrightnessView = (TextView)findViewById(R.id.brightness);
+        mStartActivityBtn.setEnabled(false);
+        if(mIsServiceRunning){
+            mStartActivityBtn.setText(R.string.stop_wearable_activity);
+        }else {
+            mStartActivityBtn.setText(R.string.start_wearable_activity);
+        }
+        mStartActivityBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                LOGD(TAG,"onclick mIsServiceRunning = " + mIsServiceRunning);
+                if(mIsServiceRunning){
+                    onStopWearableActivityClick(v);
+                } else {
+                    onStartWearableActivityClick(v);
+                }
+            }
+        });
     }
 
 

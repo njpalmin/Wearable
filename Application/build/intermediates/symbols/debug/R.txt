@@ -144,8 +144,9 @@ int string common_signin_button_text_long 0x7f070019
 int string send_photo 0x7f07001a
 int string start 0x7f07001b
 int string start_wearable_activity 0x7f07001c
-int string take_photo 0x7f07001d
-int string wallet_buy_button_place_holder 0x7f07001e
+int string stop_wearable_activity 0x7f07001d
+int string take_photo 0x7f07001e
+int string wallet_buy_button_place_holder 0x7f07001f
 int style Divider 0x7f080000
 int style Theme_IAPTheme 0x7f080001
 int style WalletFragmentDefaultButtonTextAppearance 0x7f080002

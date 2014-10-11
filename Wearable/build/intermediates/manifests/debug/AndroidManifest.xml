@@ -41,6 +41,7 @@
                 <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
             </intent-filter>
         </service>
+        <service android:name="com.example.android.wearable.datalayer.HeartRateMonitor" />
 
         <activity
             android:name="com.example.android.wearable.datalayer.MainActivity"
