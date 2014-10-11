@@ -17,14 +17,9 @@
 package com.example.android.wearable.datalayer;
 
 import static com.example.android.wearable.datalayer.DataLayerListenerService.LOGD;
-import static com.google.android.gms.common.GooglePlayServicesUtil.isGooglePlayServicesAvailable;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -32,28 +27,17 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.data.FreezableUtils;
-import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.DataMapItem;
-import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
@@ -61,9 +45,6 @@ import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -87,24 +68,27 @@ public class MainActivity extends Activity implements SensorEventListener, Conne
     private Handler mHandler;
     private Sensor mHeartRateSensor;
     private float mHeartRate;
+    private SensorManager mSensorManager;
 
     private ScheduledExecutorService mGeneratorExecutor;
     private ScheduledFuture<?> mDataItemGeneratorFuture;
+
+//    private Object mLock;
 
     @Override
     public void onCreate(Bundle b) {
         super.onCreate(b);
 //        mHandler = new Handler();
-
+//        mLock = new Object();
         setContentView(R.layout.main_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mDataItemList = (ListView) findViewById(R.id.dataItem_list);
         mIntroText = (TextView) findViewById(R.id.intro);
         mLayout = findViewById(R.id.layout);
 
-        SensorManager mSensorManager = ((SensorManager)getSystemService(SENSOR_SERVICE));
+        mSensorManager = ((SensorManager)getSystemService(SENSOR_SERVICE));
         mHeartRateSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE);
-        mSensorManager.registerListener(this,mHeartRateSensor,3);
+//        mSensorManager.registerListener(this,mHeartRateSensor,3);
 
         mGeneratorExecutor = new ScheduledThreadPoolExecutor(1);
         // Stores data events received by the local broadcaster.
@@ -116,8 +100,8 @@ public class MainActivity extends Activity implements SensorEventListener, Conne
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-        mDataItemGeneratorFuture = mGeneratorExecutor.scheduleWithFixedDelay(
-                new DataItemGenerator(), 1, 5, TimeUnit.SECONDS);
+//        mDataItemGeneratorFuture = mGeneratorExecutor.scheduleWithFixedDelay(
+//                new DataItemGenerator(), 1, 5, TimeUnit.SECONDS);
 //        mGoogleApiClient.connect();
 //
 //        int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
@@ -133,9 +117,11 @@ public class MainActivity extends Activity implements SensorEventListener, Conne
     }
 
     public void onResume() {
+        LOGD(TAG,"onResume");
         super.onResume();
+        mSensorManager.registerListener(this,mHeartRateSensor,3);
         mDataItemGeneratorFuture = mGeneratorExecutor.scheduleWithFixedDelay(
-                new DataItemGenerator(), 1, 5, TimeUnit.SECONDS);
+                new DataItemGenerator(), 1, 3, TimeUnit.SECONDS);
     }
     @Override
     protected void onStart() {
@@ -147,12 +133,20 @@ public class MainActivity extends Activity implements SensorEventListener, Conne
 
     @Override
     protected void onPause() {
+        LOGD(TAG,"onPause");
         super.onPause();
 //        Wearable.DataApi.removeListener(mGoogleApiClient, this);
 //        Wearable.MessageApi.removeListener(mGoogleApiClient, this);
 //        Wearable.NodeApi.removeListener(mGoogleApiClient, this);
         mGoogleApiClient.disconnect();
         mDataItemGeneratorFuture.cancel(true /* mayInterruptIfRunning */);
+        mSensorManager.unregisterListener(this);
+    }
+
+    @Override
+    protected void onStop() {
+        LOGD(TAG,"onStop");
+        super.onStop();
     }
 
     @Override
@@ -217,29 +211,11 @@ public class MainActivity extends Activity implements SensorEventListener, Conne
 //        }
 //    }
 
-    /**
-     * Extracts {@link android.graphics.Bitmap} data from the
-     * {@link com.google.android.gms.wearable.Asset}
-     */
-    private Bitmap loadBitmapFromAsset(GoogleApiClient apiClient, Asset asset) {
-        if (asset == null) {
-            throw new IllegalArgumentException("Asset must be non-null");
-        }
-
-        InputStream assetInputStream = Wearable.DataApi.getFdForAsset(
-                apiClient, asset).await().getInputStream();
-
-        if (assetInputStream == null) {
-            Log.w(TAG, "Requested an unknown Asset.");
-            return null;
-        }
-        return BitmapFactory.decodeStream(assetInputStream);
-    }
-//
 //    @Override
 //    public void onMessageReceived(MessageEvent event) {
 //        LOGD(TAG, "onMessageReceived: " + event);
-//        generateEvent("Message", event.toString());
+//
+//        //generateEvent("Message", event.toString());
 //    }
 //
 //    @Override
@@ -255,7 +231,7 @@ public class MainActivity extends Activity implements SensorEventListener, Conne
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        Log.d(TAG, "sensor event: " + event.accuracy + " = " + event.values[0]);
+//        Log.d(TAG, "sensor event: " + event.accuracy + " = " + event.values[0]);
         mHeartRate = event.values[0];
     }
 
@@ -274,100 +250,60 @@ public class MainActivity extends Activity implements SensorEventListener, Conne
         Log.d(TAG, "accuracy changed: " + accuracy);
     }
 
-//    private static class DataItemAdapter extends ArrayAdapter<Event> {
-//
-//        private final Context mContext;
-//
-//        public DataItemAdapter(Context context, int unusedResource) {
-//            super(context, unusedResource);
-//            mContext = context;
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//            ViewHolder holder;
-//            if (convertView == null) {
-//                holder = new ViewHolder();
-//                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(
-//                        Context.LAYOUT_INFLATER_SERVICE);
-//                convertView = inflater.inflate(android.R.layout.two_line_list_item, null);
-//                convertView.setTag(holder);
-//                holder.text1 = (TextView) convertView.findViewById(android.R.id.text1);
-//                holder.text2 = (TextView) convertView.findViewById(android.R.id.text2);
-//            } else {
-//                holder = (ViewHolder) convertView.getTag();
-//            }
-//            Event event = getItem(position);
-//            holder.text1.setText(event.title);
-//            holder.text2.setText(event.text);
-//            return convertView;
-//        }
-//
-//        private class ViewHolder {
-//
-//            TextView text1;
-//            TextView text2;
-//        }
-//    }
-
-//    private class Event {
-//
-//        String title;
-//        String text;
-//
-//        public Event(String title, String text) {
-//            this.title = title;
-//            this.text = text;
-//        }
-//    }
+    /**
+     * Called by the system when the device configuration changes while your
+     * activity is running.  Note that this will <em>only</em> be called if
+     * you have selected configurations you would like to handle with the
+     * {@link android.R.attr#configChanges} attribute in your manifest.  If
+     * any configuration change occurs that is not selected to be reported
+     * by that attribute, then instead of reporting it the system will stop
+     * and restart the activity (to have it launched with the new
+     * configuration).
+     * <p/>
+     * <p>At the time that this function has been called, your Resources
+     * object will have been updated to return resource values matching the
+     * new configuration.
+     *
+     * @param newConfig The new device configuration.
+     */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        LOGD(TAG,"onConfigurationChanged");
+        super.onConfigurationChanged(newConfig);
+    }
 
     /** Generates a DataItem based on an incrementing count. */
     private class DataItemGenerator implements Runnable {
 
         @Override
         public void run() {
-            if(mHeartRate == 0.0){
-                return;
-            }
-            NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-            PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(HEARTRATE_PATH);
-            putDataMapRequest.getDataMap().putFloat(HEARTRATE_KEY, mHeartRate);
-            PutDataRequest request = putDataMapRequest.asPutDataRequest();
+                if (mHeartRate == 0.0) {
+                    return;
+                }
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+                PutDataMapRequest putDataMapRequest = PutDataMapRequest.create(HEARTRATE_PATH);
+                putDataMapRequest.getDataMap().putFloat(HEARTRATE_KEY, mHeartRate);
+                PutDataRequest request = putDataMapRequest.asPutDataRequest();
 
-            LOGD(TAG, "Generating DataItem: " + request);
-            if (!mGoogleApiClient.isConnected()) {
-                LOGD(TAG,"return");
-                return;
-            }
-            for (final Node node : nodes.getNodes()) {
-                Wearable.DataApi.putDataItem(mGoogleApiClient, request)
-                        .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-                            @Override
-                            public void onResult(DataApi.DataItemResult dataItemResult) {
-                                if (!dataItemResult.getStatus().isSuccess()) {
-                                    Log.e(TAG, "ERROR: failed to putDataItem, status code: "
-                                            + dataItemResult.getStatus().getStatusCode());
-                                } else {
-                                    Log.d(TAG, "success send to " + node.getDisplayName());
+                LOGD(TAG, "Generating DataItem: " + request);
+                if (!mGoogleApiClient.isConnected()) {
+                    LOGD(TAG, "return");
+                    return;
+                }
+                for (final Node node : nodes.getNodes()) {
+                    Wearable.DataApi.putDataItem(mGoogleApiClient, request)
+                            .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                                @Override
+                                public void onResult(DataApi.DataItemResult dataItemResult) {
+                                    if (!dataItemResult.getStatus().isSuccess()) {
+                                        Log.e(TAG, "ERROR: failed to putDataItem, status code: "
+                                                + dataItemResult.getStatus().getStatusCode());
+                                    } else {
+                                        Log.d(TAG, "success send to " + node.getDisplayName());
+                                    }
                                 }
-                            }
-                        });
-            }
+                            });
+                }
         }
     }
-//    private void sendHeartRate(float heartrate) {
-//        LOGD(TAG,"sendHeartRate heartrate = " + heartrate);
-//        PutDataMapRequest dataMap = PutDataMapRequest.create(HEARTRATE_PATH);
-//        dataMap.getDataMap().putFloat(HEARTRATE_KEY, heartrate);
-//        PutDataRequest request = dataMap.asPutDataRequest();
-//        Wearable.DataApi.putDataItem(mGoogleApiClient, request)
-//                .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
-//                    @Override
-//                    public void onResult(DataApi.DataItemResult dataItemResult) {
-//                        LOGD(TAG, "Sending heartrate was successful: " + dataItemResult.getStatus()
-//                                .isSuccess());
-//                    }
-//                });
-//
-//    }
 }

@@ -36,12 +36,11 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <!-- <service -->
-        <!-- android:name=".DataLayerListenerService" > -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="com.google.android.gms.wearable.BIND_LISTENER" /> -->
-        <!-- </intent-filter> -->
-        <!-- </service> -->
+        <service android:name="com.example.android.wearable.datalayer.DataLayerListenerService" >
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.BIND_LISTENER" />
+            </intent-filter>
+        </service>
 
         <activity
             android:name="com.example.android.wearable.datalayer.MainActivity"
@@ -52,11 +51,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="com.example.android.wearable.datalayer.EXAMPLE" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            <!-- <intent-filter> -->
+            <!-- <action android:name="com.example.android.wearable.heartratemonitor.EXAMPLE"/> -->
+            <!-- <category android:name="android.intent.category.DEFAULT"/> -->
+            <!-- </intent-filter> -->
         </activity>
     </application>
 

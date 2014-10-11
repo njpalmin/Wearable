@@ -78,6 +78,6 @@
     <!-- From: file:/Users/ptmn68/workspace/DataLayer/Wearable/src/main/res/values/strings.xml -->
     <eat-comment />
 
-    <string name="intro">Waiting... \u2026</string>
+    <string name="intro">Monitor Heart Rate ... \u2026</string>
 
 </resources>

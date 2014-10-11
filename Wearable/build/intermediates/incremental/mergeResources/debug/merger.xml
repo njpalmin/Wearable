@@ -8583,7 +8583,7 @@
                 qualifiers="" >
                 <string name="app_name" >HeartRate Monitor Wearable App
                 </string>
-                <string name="intro" >Waiting... \u2026
+                <string name="intro" >Monitor Heart Rate ... \u2026
                 </string>
             </file>
         </source>

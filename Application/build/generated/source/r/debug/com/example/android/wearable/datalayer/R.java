@@ -396,6 +396,7 @@ containing a value of this type.
     }
     public static final class id {
         public static final int book_now=0x7f050010;
+        public static final int brightness=0x7f050016;
         public static final int buyButton=0x7f05000a;
         public static final int buy_now=0x7f05000f;
         public static final int buy_with_google=0x7f05000e;
