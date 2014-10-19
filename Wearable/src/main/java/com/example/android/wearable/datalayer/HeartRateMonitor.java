@@ -68,7 +68,7 @@ public class HeartRateMonitor extends Service implements SensorEventListener, Go
                 .build();
         mGoogleApiClient.connect();
         mDataItemGeneratorFuture = mGeneratorExecutor.scheduleWithFixedDelay(
-                new DataItemGenerator(), 1, 2, TimeUnit.SECONDS);
+                new DataItemGenerator(), 1, 1, TimeUnit.SECONDS);
     }
 
     /**

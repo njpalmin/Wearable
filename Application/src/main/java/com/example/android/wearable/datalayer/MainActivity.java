@@ -32,6 +32,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -82,12 +83,16 @@ public class MainActivity extends Activity implements DataApi.DataListener,
     private TextView mHeartRateView;
     private TextView mBrightnessView;
     private Button mStartActivityBtn;
+    private SeekBar mHeartRateThresholdBar;
+    private TextView mHeartRateThreshold;
 
     private Handler mHandler;
     private ContentResolver mResolver;
     private int mBrightness;
     private int mOrigBrightness;
     private Window mWindow;
+    private int mThreshold;
+    private int mHeartRate;
 
     private boolean mIsServiceRunning = false;
     private Collection<String> mNodes;
@@ -111,7 +116,12 @@ public class MainActivity extends Activity implements DataApi.DataListener,
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-
+//        mHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mBrightnessView.setText("Current Brightness is " + Integer.toString(getBrightness()));
+//            }
+//        });
     }
 
     @Override
@@ -203,27 +213,32 @@ public class MainActivity extends Activity implements DataApi.DataListener,
                 DataMap dataMap = DataMapItem.fromDataItem(event.getDataItem()).getDataMap();
                 LOGD(TAG, "DataMap received on watch: " + dataMap);
                 final float heartRate = dataMap.getFloat(HEARTRATE_KEY);
+                mHeartRate = (int)heartRate;
 
-                if(heartRate - 5 > HEARTRATE_THRESHOLD){
-                    //too fast
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
                             Log.d(TAG, "Setting heartrate ...");
-                            mHeartRateView.setText("Heart Rate is " + Integer.toString((int)heartRate));
-                            updateBrightness(0);
+                            mHeartRateView.setText("Heart Rate is " + Integer.toString((int)mHeartRate));
+//                            mHeartRateView.setText("Heart Rate is " + Integer.toString((int)heartRate));
+
+                            if(mHeartRate - 5 > mThreshold) {
+                                updateBrightness(0);
+                            } else {
+                                updateBrightness(mOrigBrightness);
+                            }
                         }
                     });
-                } else {
-                    mHandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d(TAG, "Setting heartrate ...");
-                            mHeartRateView.setText("Heart Rate is " + Integer.toString((int)heartRate));
-                            updateBrightness(mOrigBrightness);
-                        }
-                    });
-                }
+//                } else {
+//                    mHandler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Log.d(TAG, "Setting heartrate ...");
+//                            mHeartRateView.setText("Heart Rate is " + Integer.toString((int)heartRate));
+//                            updateBrightness(mOrigBrightness);
+//                        }
+//                    });
+//                }
 
 
             }
@@ -268,6 +283,7 @@ public class MainActivity extends Activity implements DataApi.DataListener,
                         if (!sendMessageResult.getStatus().isSuccess()) {
                             Log.e(TAG, "Failed to send message with status code: "
                                     + sendMessageResult.getStatus().getStatusCode());
+                            mIsServiceRunning = false;
                         } else {
                             LOGD(TAG,"start service");
                             mIsServiceRunning = true;
@@ -355,6 +371,44 @@ public class MainActivity extends Activity implements DataApi.DataListener,
         mStartActivityBtn = (Button)findViewById(R.id.start_wearable_activity);
         mHeartRateView = (TextView)findViewById(R.id.heart_rate);
         mBrightnessView = (TextView)findViewById(R.id.brightness);
+        mHeartRateThresholdBar = (SeekBar)findViewById(R.id.heart_rate_seekbar);
+        mHeartRateThreshold = (TextView)findViewById(R.id.hear_rate_threshold);
+        mHeartRateThreshold.setText(Integer.toString(HEARTRATE_THRESHOLD) + " bmp");
+
+        mHeartRateThresholdBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mHeartRateThreshold.setText(Integer.toString(progress) + " bmp" );
+                mThreshold = progress;
+                mHeartRateView.setText("Heart Rate is " + Integer.toString((int) mHeartRate));
+                if(mHeartRate - 5 > mThreshold) {
+                    //too fast
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d(TAG, "Setting heartrate ...");
+//                            mHeartRateView.setText("Heart Rate is " + Integer.toString((int) mHeartRate));
+                            updateBrightness(0);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        mHeartRateThresholdBar.setProgress(HEARTRATE_THRESHOLD);
+
         mStartActivityBtn.setEnabled(false);
         if(mIsServiceRunning){
             mStartActivityBtn.setText(R.string.stop_wearable_activity);
@@ -389,8 +443,7 @@ public class MainActivity extends Activity implements DataApi.DataListener,
 
     int getBrightness() {
         int brightness = 0;
-        try
-        {
+        try {
             // To handle the auto
             Settings.System.putInt(mResolver,Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
             //Get the current system brightness

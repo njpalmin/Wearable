@@ -402,7 +402,10 @@ containing a value of this type.
         public static final int buy_with_google=0x7f05000e;
         public static final int classic=0x7f050011;
         public static final int grayscale=0x7f050012;
+        public static final int hear_rate_threshold=0x7f050018;
         public static final int heart_rate=0x7f050015;
+        public static final int heart_rate_seekbar=0x7f050019;
+        public static final int heart_rate_threshold_lab=0x7f050017;
         public static final int holo_dark=0x7f050005;
         public static final int holo_light=0x7f050006;
         public static final int hybrid=0x7f050004;
